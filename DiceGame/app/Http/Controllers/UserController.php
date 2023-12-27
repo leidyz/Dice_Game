@@ -32,16 +32,28 @@ class UserController extends Controller
         $user = User::create($input)->assignRole('player');
         $success['token'] =  $user->createToken('DiceGame')-> accessToken; 
         $success['name'] =  $user->name;
-        return response()->json(['success'=>$success], $this-> $createdStatus); 
+        return response()->json(['success'=>$success], $this->createdStatus); 
     }
-
-    }
-
     public function login(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], $this->unauthorizedStatus);
+        }
+
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {// checking the provided credentials 
+            $user = Auth::user();
+            $success['token'] = $user->createToken('DiceGame')->accessToken;
+            return response()->json(['success' => $success], $this->successStatus);
+        } else {
+            return response()->json(['error' => 'Unauthorized'], $this->unauthorizedStatus);
+        }
     }
 
-    public function logout(Request $request){
 
-    }
+
 }
+
