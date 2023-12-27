@@ -16,6 +16,24 @@ class UserController extends Controller
     public $notFoundStatus = 404;
 
     public function register(Request $request){
+        $validator = Validator::make($request->all(),[
+            'name'=> 'sometimes|unique:users',
+            'email'=>'required|email|unique:users',
+            'password'=>'required|min:8',
+        ]);
+
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], $this->unauthorizedStatus);            
+        }
+
+        $input = $request->all(); 
+        $input['name']= $request->input('name','anonymous');//handle optional input fields with a default value.
+        $input['password'] = bcrypt($input['password']); //this hashing is more resistant to brute-force attacks.
+        $user = User::create($input)->assignRole('player');
+        $success['token'] =  $user->createToken('DiceGame')-> accessToken; 
+        $success['name'] =  $user->name;
+        return response()->json(['success'=>$success], $this-> $createdStatus); 
+    }
 
     }
 
@@ -24,6 +42,6 @@ class UserController extends Controller
     }
 
     public function logout(Request $request){
-        
+
     }
 }
