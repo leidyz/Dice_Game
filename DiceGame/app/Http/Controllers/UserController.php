@@ -18,7 +18,7 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|unique:users',
+            'name' => 'nullable|unique:users',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
         ]);
@@ -62,6 +62,7 @@ class UserController extends Controller
         $token->revoke();
         return response()->json(['message' => 'Successfully logged out'], $this->successStatus);
     }
+
 
 }
 
