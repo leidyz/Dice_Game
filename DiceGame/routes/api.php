@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Auth\LoginRegisterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,14 +15,14 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::post('/register', [UserController::class,'register']);
-Route::post('/login', [UserController::class,'login']);
-
-
-Route::middleware('auth:api')->group(function () {
-   
-    Route::post('/logout', [UserController::class,'logout']);
-
+// Public routes of authtication
+Route::controller(LoginRegisterController::class)->group(function() {
+    Route::post('/register', 'register');
+    Route::post('/login', 'login');
 });
+
+Route::middleware('auth:api')->group( function () {
+    Route::post('/logout', [LoginRegisterController::class, 'logout']);
+});
+
 
