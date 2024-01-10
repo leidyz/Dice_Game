@@ -74,11 +74,10 @@ class GameController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-        $userGames = Game::where('user_id', $user->id);
+        
+        Game::where('user_id', $user->id)->delete();
 
-        foreach($userGames as $game){
-            $game->delete();
-        }
+       
         return response()->json(['message'=> 'All dice rolls deleted successfully!']);
     }
 
