@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 */
 // Public routes of authtication
 Route::controller(LoginRegisterController::class)->group(function() {
-    Route::post('/register', 'register')->name('user.register');
+    Route::post('/players', 'register')->name('user.register');
     Route::post('/login', 'login')->name('user.login');
 });
 
@@ -32,5 +32,8 @@ Route::middleware('auth:api')->group(function(){
     Route::get('players/{id}/games',[GameController::class,'index'])->name('games.index');
 
     Route::put('/players/{id}', [UserController::class, 'update'])->name('user.update'); 
+    Route::get('/players', [UserController::class, 'index'])->name('user.index'); //all players success rate
+    
+
 });
 
