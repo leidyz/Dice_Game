@@ -10,16 +10,19 @@ class GameController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *  Route::post('/players/{id}/games/','play')->name('games.play');
-    *Route::delete('/players/{id}/games/','delete')->name('games.delete');
-    *
      */
     public function index()
     {
         //Route::get('players/{id}/games','index')->name('games.index');
-        return view ('games.index',['games'=>Game::all()]);
-    }
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        $userGames = Game::where('user_id', $user->id)->get();
 
+        return response()->json($userGames);
+    }
+ 
     /**
      * Store a newly created resource in storage.
      */
@@ -63,6 +66,23 @@ class GameController extends Controller
     }
 
     /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Game $game)
+    {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        $userGames = Game::where('user_id', $user->id);
+
+        foreach($userGames as $game){
+            $game->delete();
+        }
+        return response()->json(['message'=> 'All dice rolls deleted successfully!']);
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(Game $game)
@@ -77,12 +97,5 @@ class GameController extends Controller
     {
         //
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Game $game)
-    {
-        //
-    }
+    
 }
