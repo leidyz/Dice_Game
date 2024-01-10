@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginRegisterController;
 use Illuminate\Http\Request;
@@ -17,12 +18,17 @@ use Illuminate\Support\Facades\Route;
 */
 // Public routes of authtication
 Route::controller(LoginRegisterController::class)->group(function() {
-    Route::post('/register', 'register');
-    Route::post('/login', 'login');
+    Route::post('/register', 'register')->name('user.register');
+    Route::post('/login', 'login')->name('user.login');
 });
 
 Route::middleware('auth:api')->group( function () {
-    Route::post('/logout', [LoginRegisterController::class, 'logout']);
+    Route::post('/logout', [LoginRegisterController::class, 'logout'])->name('user.logout');
 });
 
+Route::middleware('auth:api')->group(function(){
+    Route::post('/players/{id}/games/',[GameController::class,'play'])->name('games.play');
+    Route::delete('/players/{id}/games/',[GameController::class,'destroy'])->name('games.destroy');
+    Route::get('players/{id}/games',[GameController::class,'index'])->name('games.index');
+});
 
