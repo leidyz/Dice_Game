@@ -33,7 +33,7 @@ Route::middleware('auth:api')->group(function(){
 
     Route::put('/players/{id}', [UserController::class, 'update'])->name('user.update'); 
     Route::get('/players', [UserController::class, 'index'])->name('user.index'); //all players success rate
-    
+    Route::get('/players/ranking', [UserController::class, 'getRanking'])->name('user.ranking'); //all players success rate
 
 });
 
