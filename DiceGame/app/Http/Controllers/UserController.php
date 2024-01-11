@@ -30,7 +30,7 @@ class UserController extends Controller
 
         User::where('id', $user->id)->update(['name' => $newName]);
 
-        return response()->json(['message' => 'Player name updated successfully']);
+        return response()->json(['message' => 'Player name updated successfully'], 200);
     }
 
     private function getUserSuccessRate()
@@ -66,12 +66,11 @@ class UserController extends Controller
 
          $averageSuccessRate= $users->avg('success_rate');
     
-         return response()->json(['Players Average Success Rate' => round($averageSuccessRate, 1), 'users' => $users]);
+         return response()->json(['Players Average Success Rate' => round($averageSuccessRate, 1), 'users' => $users],200);
 
     }
 
     public function getRanking(){
-        $users = Auth::guard('api')->user();
 
         $users = $this->getUserSuccessRate()
         ->sortByDesc('success_rate')
@@ -83,15 +82,22 @@ class UserController extends Controller
                 'Success rate' => $user->success_rate, 
             ];
         });
-        return response()->json(['Players Ranking' => $users]);
+        return response()->json(['Players Ranking' => $users],200);
 
     }
 
     public function getLoser(){
-        $users = Auth::guard('api')->user();
+ 
         $users = $this->getUserSuccessRate();
         $loser = $users->sortBy('success_rate')->first();
-        return response()->json(['Worst Success Rate'=> $loser]);
+        return response()->json(['Worst Success Rate'=> $loser],200);
+    }
+
+    public function getWinner(){
+   
+        $users = $this->getUserSuccessRate();
+        $winner = $users->sortByDesc('success_rate')->first();
+        return response()->json(['Best Success Rate'=> $winner], 200);
     }
 
 }
