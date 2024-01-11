@@ -45,7 +45,7 @@ class User extends Authenticatable
     ];
 
     //One to many relationship
-    public function rolls(){
+    public function games(){
         return $this->hasMany(Game::class);
     }
 }

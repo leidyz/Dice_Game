@@ -33,26 +33,39 @@ class UserController extends Controller
         return response()->json(['message' => 'Player name updated successfully']);
     }
 
-    private function index() {
-        $users = User::with(['games' => function ($query) {
-            $query->select('user_id', 'isWon'); // Load only necessary columns
-        }])
-        ->select('id', 'name', 'email') // Load only necessary columns
-        ->get()
+    public function index() {
+
+        $users = $this->getUserSuccessRate()
+
         ->map(function ($user) {
-            $totalGames = $user->games->count();
-            $totalWins = $user->games->where('isWon', true)->count();
-    
-            $successRate = $totalGames > 0 ? ($totalWins / $totalGames) * 100 : 0;
-    
             return [
                 'Name' => $user->name,
                 'E-mail' => $user->email,
-                'success rate' => $successRate,
+                'Success rate' => $user->success_rate,
             ];
         });
     
         return response()->json(['users' => $users], 200);
 
     }
+
+    private function getUserSuccessRate()
+    {
+        $user = Auth::guard('api')->user();
+
+        return User::whereHas('roles', function ($query) {
+            $query->where('name', 'player');})
+
+            ->withCount(['games as games_played'])
+            ->withCount(['games as games_won' => function ($query) {
+                $query->where('isWon', true);
+            }])
+            ->get()
+            ->each(function ($user) {
+                $user->success_rate = ($user->games_played > 0)
+                    ? round(($user->games_won / $user->games_played) * 100, 1)
+                    : 0;
+            });
+}
+
 }
