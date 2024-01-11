@@ -87,4 +87,11 @@ class UserController extends Controller
 
     }
 
+    public function getLoser(){
+        $users = Auth::guard('api')->user();
+        $users = $this->getUserSuccessRate();
+        $loser = $users->sortBy('success_rate')->first();
+        return response()->json(['Worst Success Rate'=> $loser]);
+    }
+
 }
