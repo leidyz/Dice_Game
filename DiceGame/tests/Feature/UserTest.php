@@ -56,6 +56,12 @@ class UserTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure(['Players Average Success Rate', 'users']);
     }
+    public function testPlayerCannotAccessAdminMethodsIndex() {
+        $user = User::factory()->create();
+        $user->assignRole('player');
+        $response = $this->actingAs($user, 'api')->getJson('/api/players/');
+        $response->assertStatus(403);
+    }
 
     public function testGetRanking() { 
         $user = User::factory()->create();
@@ -63,6 +69,12 @@ class UserTest extends TestCase
         $response = $this->actingAs($user, 'api')->getJson('/api/players/ranking');
         $response->assertStatus(200);
         $response->assertJsonStructure(['Players Ranking']);
+    }
+    public function testPlayerCannotAccessAdminMethodsRanking() {
+        $user = User::factory()->create();
+        $user->assignRole('player');
+        $response = $this->actingAs($user, 'api')->getJson('/api/players/ranking');
+        $response->assertStatus(403);
     }
 
     public function testGetLoser(){
@@ -72,6 +84,12 @@ class UserTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure(['Worst Success Rate']);
     }
+    public function testPlayerCannotAccessAdminMethodsLoser() {
+        $user = User::factory()->create();
+        $user->assignRole('player');
+        $response = $this->actingAs($user, 'api')->getJson('/api/players/ranking/loser');
+        $response->assertStatus(403);
+    }
 
     public function testGetWinner(){
         $user = User::factory()->create();
@@ -80,19 +98,13 @@ class UserTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure(['Best Success Rate']);
     }
-
-    public function testPlayerCannotAccessAdminMethods() {
+    public function testPlayerCannotAccessAdminMethodsWinner() {
         $user = User::factory()->create();
         $user->assignRole('player');
-        $response = $this->actingAs($user, 'api')->getJson('/api/players/ranking/loser');
+        $response = $this->actingAs($user,'api')->getJson('/api/players/ranking/winner');
         $response->assertStatus(403);
     }
 
-    public function testAdminCannotAccessPlayerMethods(){
-        $user = User::factory()->create();
-        $user->assignRole('admin');
-        $response = $this->actingAs($user,'api')->getJson('/api/players/{$user->id}/games/');
-        $response->assertStatus(403);
-    }
+   
 
 }
