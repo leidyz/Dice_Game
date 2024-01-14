@@ -13,7 +13,6 @@ class GameController extends Controller
      */
     public function index()
     {
-        //Route::get('players/{id}/games','index')->name('games.index');
         $user = Auth::guard('api')->user();
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);

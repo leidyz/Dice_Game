@@ -14,8 +14,9 @@ class GameFactory extends Factory
             'dice1' => $this->faker->numberBetween(1, 6),
             'dice2' => $this->faker->numberBetween(1, 6),
             'isWon' => $this->faker->boolean,
-            'user_id' => User::role('player')->inRandomOrder()->first()->id,
+            'user_id' => User::inRandomOrder()->first()->id,
         ];
+         
     }
 }
 
