@@ -81,20 +81,4 @@ class GameController extends Controller
         return response()->json(['message'=> 'All dice rolls deleted successfully!']);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Game $game)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Game $game)
-    {
-        //
-    }
-    
 }

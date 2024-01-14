@@ -51,4 +51,17 @@ class GameTest extends TestCase
         $response->assertJson($games->toArray());
     }
 
+
+    public function testDestroy(){
+        $user = User::factory()->create();
+        $user->assignRole('player');
+        $games = Game::factory()->count(5)->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user,'api')->deleteJson('/api/players/{$user->id}/games/');
+
+        $response->assertStatus(200);
+        $response->assertJson(['message'=> 'All dice rolls deleted successfully!']);
+
+    }
+
 }
