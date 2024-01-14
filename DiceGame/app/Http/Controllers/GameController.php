@@ -13,7 +13,6 @@ class GameController extends Controller
      */
     public function index()
     {
-        //Route::get('players/{id}/games','index')->name('games.index');
         $user = Auth::guard('api')->user();
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
@@ -81,20 +80,4 @@ class GameController extends Controller
         return response()->json(['message'=> 'All dice rolls deleted successfully!']);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Game $game)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Game $game)
-    {
-        //
-    }
-    
 }
