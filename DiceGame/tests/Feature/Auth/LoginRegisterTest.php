@@ -85,4 +85,18 @@ class LoginRegisterTest extends TestCase
 
  
 
+    public function testLogoutUser(){
+        
+        $user = User::factory()->create();
+        $response = $this->actingAs($user,'api')->postJson('/api/logout');
+        $response->assertJson(['message' => 'User is logged out successfully']);
+        $this->assertCount(0, $user->tokens);
+        $response->assertStatus(200);
+
+    }
+
+    
+
+ 
+
 }
