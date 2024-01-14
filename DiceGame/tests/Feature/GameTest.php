@@ -38,4 +38,17 @@ class GameTest extends TestCase
             ]);
     }
 
+
+
+    public function testIndex(){
+        $user = User::factory()->create();
+        $user->assignRole('player');
+        $games = Game::factory()->count(5)->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user,'api')->getJson('/api/players/{$user->id}/games');
+
+        $response->assertStatus(200);
+        $response->assertJson($games->toArray());
+    }
+
 }
