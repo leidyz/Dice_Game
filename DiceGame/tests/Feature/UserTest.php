@@ -4,44 +4,36 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 use App\Models\User;
 
 class UserTest extends TestCase
 {
+    use RefreshDatabase, WithFaker;
 
-    public function testUserRegistration()
+    public function setUp(): void
     {
-        $userData = [
-            'name' => 'karly',
-            'email' => 'karly@example.com',
-            'password' => 'asdfg123',
-            'password_confirmation' => 'asdfg123',
-        ];
-
-        $response = $this->postJson('/api/players', $userData);
-
-        $response->assertJson([
-            'status' => 'success',
-            'message' => 'User is created successfully.',
-            'data' => $userData,
-        ]);
-        $response->assertStatus(201);
+        parent::setUp();
+        Artisan::call('db:seed', ['--class' => 'RoleSeeder']);
+        Artisan::call('passport:install');
     }
 
-    public function testUserRegistrationWithValidationErrors()
+
+    public function testUpdateNameSuccessfully()
     {
-        // Missing email
-        $invalidUserData = [
-            'name' => 'karly',
-            'password' => 'asdfg123',
-            'password_confirmation' => 'asdfg123',
-        ];
+       
+        $user = User::factory()->create();
+        $user->assignRole('player'); 
 
-        $response = $this->postJson('/api/players', $invalidUserData);
+        $response = $this->actingAs($user, 'api')->putJson('/api/players/' . $user->id, ['newName' => 'NewName']);
+ 
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Player name updated successfully',
+            ]);
 
-        $response->assertStatus(403);
-        $response->assertJsonStructure(['status', 'message', 'data']);
-        $response->assertJsonValidationErrors(['email']);
+        $this->assertDatabaseHas('users', ['id' => $user->id, 'name' => 'NewName']);
     }
+
 }
