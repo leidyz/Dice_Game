@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 */
 // Public routes of authtication
 Route::controller(LoginRegisterController::class)->group(function() {
-    Route::post('/register', 'register')->name('user.register');
+    Route::post('/players', 'register')->name('user.register');
     Route::post('/login', 'login')->name('user.login');
 });
 
@@ -27,10 +27,21 @@ Route::middleware('auth:api')->group( function () {
 });
 
 Route::middleware('auth:api')->group(function(){
-    Route::post('/players/{id}/games/',[GameController::class,'play'])->name('games.play');
-    Route::delete('/players/{id}/games/',[GameController::class,'destroy'])->name('games.destroy');
-    Route::get('players/{id}/games',[GameController::class,'index'])->name('games.index');
+    
+    Route::middleware('role:player')->group(function () {
+        Route::post('/players/{id}/games/',[GameController::class,'play'])->name('games.play');
+        Route::delete('/players/{id}/games/',[GameController::class,'destroy'])->name('games.destroy');
+        Route::get('players/{id}/games',[GameController::class,'index'])->name('games.index');
+        Route::put('/players/{id}', [UserController::class, 'update'])->name('user.update');
+    });
 
-    Route::put('/players/{id}', [UserController::class, 'update'])->name('user.update'); 
+    Route::middleware('role:admin')->group(function(){
+        Route::get('/players', [UserController::class, 'index'])->name('user.index'); 
+        Route::get('/players/ranking', [UserController::class, 'getRanking'])->name('user.ranking'); 
+        Route::get('/players/ranking/loser', [UserController::class, 'getloser'])->name('user.loser');
+        Route::get('/players/ranking/winner', [UserController::class, 'getWinner'])->name('user.winner');
+    });
+    
+
 });
 
