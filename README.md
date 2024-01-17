@@ -84,6 +84,7 @@ php artisan db:seed
 php artisan passport:install
 - Seed Roles:
 php artisan db:seed --class=RoleSeeder
+php artisan db:seed --class=PlayersTableSeeder
 - Run Tests:
 php artisan test
 - Serve the Application:
