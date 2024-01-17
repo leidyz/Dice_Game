@@ -20,7 +20,7 @@ class LoginRegisterController extends Controller
     public function register(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'name' => 'nullable|string|unique:users',
+            'name' => 'nullable|string|unique:users,name,' . $request->id,
             'email' => 'required|string|email:rfc,dns|unique:users,email',
             'password' => 'required|string|min:8|confirmed'
         ]);
@@ -33,7 +33,7 @@ class LoginRegisterController extends Controller
             ], 403);
         }
         $input = $request->all();
-        $input['name'] = $request->input('name', 'anonymous'); //handle optional input fields with a default value.
+        $input['name'] = $input['name'] ?? 'anonymous';
         $input['password'] = bcrypt($input['password']); //this hashing is more resistant to brute-force attacks.
         $user = User::create($input)->assignRole('player');
 
